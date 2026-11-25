@@ -3,6 +3,14 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// Постоянный debug-ключ, чтобы новые сборки ставились ПОВЕРХ старых без удаления приложения.
+// Ключ хранится в репозитории в текстовом виде (base64) и распаковывается перед сборкой.
+def keystoreB64 = rootProject.file('signing/directcast-debug.keystore.b64')
+def keystoreFile = rootProject.file('signing/directcast-debug.keystore')
+if (keystoreB64.exists() && !keystoreFile.exists()) {
+    keystoreFile.bytes = java.util.Base64.getMimeDecoder().decode(keystoreB64.text)
+}
+
 android {
     namespace 'com.directcast'
     compileSdk 35
@@ -11,8 +19,19 @@ android {
         applicationId 'com.directcast'
         minSdk 23
         targetSdk 32
-        versionCode 1
-        versionName '0.1.0'
+        versionCode 3
+        versionName '0.3.0'
+    }
+
+    signingConfigs {
+        debug {
+            if (keystoreFile.exists()) {
+                storeFile keystoreFile
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
     }
 
     compileOptions {

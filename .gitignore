@@ -3,3 +3,5 @@ build/
 **/build/
 local.properties
 *.iml
+.idea/
+signing/directcast-debug.keystore
